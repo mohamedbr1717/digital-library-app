@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ book.title }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/educational_book_styles.css"> {# ✅ ربط ملف الـ CSS الخارجي #}
+</head>
+<body class="{{ book.theme_class }}"> {# ✅ إضافة فئة الثيم لجسم الصفحة #}
+    <div class="container">
+        <h1>{{ book.title }}</h1>
+        <p>{{ book.description }}</p> {# ✅ عرض الوصف إذا كان متاحاً #}
+
+        {% if book.sections %}
+            {% for section in book.sections %}
+                <section>
+                    <h2>{{ section.title }}</h2>
+                    <ul>
+                        {% for item in section.items %}
+                            <li>
+                                <a href="{{ item.link }}">
+                                    <span class="icon">{{ item.icon }}</span> {{ item.text }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </section>
+            {% endfor %}
+        {% else %}
+            <p>لا يوجد محتوى متاح لهذا الكتاب حالياً.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

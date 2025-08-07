@@ -1,0 +1,144 @@
+/* app/static/css/educational_book_styles.css */
+
+/* --- الإعدادات الأساسية للكتب التعليمية --- */
+:root {
+    --book-primary-color: #4f46e5; /* لون افتراضي سيتم تجاوزه لكل كتاب */
+    --book-bg-light: #f8fafc;
+    --book-text-color: #1e293b;
+    --book-border-color: #e2e8f0;
+}
+
+body {
+    font-family: 'Tajawal', sans-serif;
+    direction: rtl;
+    padding: 2rem;
+    background-color: var(--book-bg-light);
+    color: var(--book-text-color);
+    line-height: 1.8;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+h1 {
+    color: var(--book-primary-color);
+    border-bottom: 2px solid var(--book-border-color);
+    padding-bottom: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+section {
+    background: white; /* خلفية افتراضية بيضاء */
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--book-border-color);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* إضافة ظل خفيف */
+}
+
+h2 {
+    color: var(--book-primary-color); /* استخدام نفس اللون الرئيسي لتماسك التصميم */
+    margin-bottom: 1rem;
+    font-size: 1.3rem; /* تعديل حجم الخط للوحدات */
+}
+
+ul {
+    list-style-type: none;
+    padding-right: 0;
+}
+
+li {
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+}
+
+li a {
+    text-decoration: none;
+    color: var(--book-text-color);
+    transition: color 0.3s ease;
+    display: flex; /* لترتيب الأيقونة والنص */
+    align-items: center;
+}
+
+li a:hover {
+    color: var(--book-primary-color);
+}
+
+.icon {
+    margin-left: 0.5rem;
+    color: var(--book-primary-color); /* لون الأيقونة بلون الكتاب */
+}
+
+/* --- فئات خاصة بألوان كل كتاب (يمكن توسيعها) --- */
+
+/* كتاب اللغة العربية - ابتدائي */
+.arabic-primary-theme {
+    --book-primary-color: #4f46e5;
+    --book-bg-section: #f8fafc; /* خلفية القسم خفيفة */
+}
+.arabic-primary-theme section {
+    background: var(--book-bg-section);
+}
+
+
+/* كتاب الفيزياء - إعدادي */
+.physics-middle-theme {
+    --book-primary-color: #2e7d32;
+    --book-bg-section: #e8f5e9;
+}
+.physics-middle-theme section {
+    background: var(--book-bg-section);
+    border: 1px solid #c8e6c9;
+}
+
+/* كتاب الرياضيات - إعدادي */
+.math-middle-theme {
+    --book-primary-color: #0277bd;
+    --book-bg-section: #e3f2fd;
+}
+.math-middle-theme section {
+    background: var(--book-bg-section);
+    border: 1px solid #bbdefb;
+}
+
+/* كتاب الكيمياء - ثانوي */
+.chemistry-high-theme {
+    --book-primary-color: #d84315;
+    --book-bg-section: #fbe9e7;
+}
+.chemistry-high-theme section {
+    background: var(--book-bg-section);
+    border: 1px solid #ffccbc;
+}
+
+/* كتاب الفلسفة - ثانوي */
+.philosophy-high-theme {
+    --book-primary-color: #5e35b1;
+    --book-bg-section: #ede7f6;
+}
+.philosophy-high-theme section {
+    background: var(--book-bg-section);
+    border: 1px solid #d1c4e9;
+}
+
+/* كتاب الإحصاء - جامعي */
+.stats-university-theme {
+    --book-primary-color: #558b2f;
+    --book-bg-section: #f1f8e9;
+}
+.stats-university-theme section {
+    background: var(--book-bg-section);
+    border: 1px solid #dcedc8;
+}
+
+/* كتاب علم النفس - جامعي */
+.psychology-university-theme {
+    --book-primary-color: #00838f;
+    --book-bg-section: #e0f7fa;
+}
+.psychology-university-theme section {
+    background: var(--book-bg-section);
+    border: 1px solid #b2ebf2;
+}
