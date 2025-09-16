@@ -1,7 +1,7 @@
 # app/services/content_service.py
 from beanie import PydanticObjectId
 from typing import List, Optional
-
+from datetime import datetime
 from app.db.models import BaseContent, Feedback, ContentCreateIn, ContentUpdateIn
 from app.db.error_models import ContentNotFoundError
 
@@ -14,9 +14,6 @@ class ContentService:
         query: Optional[str] = None,
         tags: Optional[List[str]] = None
     ) -> List[BaseContent]:
-        """
-        يجلب قائمة المحتوى مع دعم للبحث والفلترة والترقيم.
-        """
         search_criteria = {"content_type": content_type, "deleted_at": None}
         
         if query:
@@ -34,9 +31,6 @@ class ContentService:
 
     @staticmethod
     async def get_content_by_id(content_id: PydanticObjectId) -> BaseContent:
-        """
-        يجلب عنصر محتوى واحد بواسطة معرفه.
-        """
         content = await BaseContent.find_one({"_id": content_id, "deleted_at": None})
         if not content:
             raise ContentNotFoundError(content_id=str(content_id))
@@ -44,41 +38,29 @@ class ContentService:
 
     @staticmethod
     async def create_new_content(content_data: ContentCreateIn) -> BaseContent:
-        """
-        ينشئ عنصر محتوى جديد.
-        """
         content = BaseContent(**content_data.dict())
         await content.insert()
         return content
 
     @staticmethod
     async def update_existing_content(content_id: PydanticObjectId, content_data: ContentUpdateIn) -> BaseContent:
-        """
-        يحدّث عنصر محتوى موجود.
-        """
         content = await ContentService.get_content_by_id(content_id)
         update_data = content_data.dict(exclude_unset=True)
-        await content.update({"$set": update_data})
-        # يجب إعادة جلب المحتوى المحدث لضمان عرض البيانات الجديدة
+        await content.set(update_data)
         updated_content = await ContentService.get_content_by_id(content_id)
         return updated_content
 
     @staticmethod
     async def delete_content_by_id(content_id: PydanticObjectId):
-        """
-        يقوم بحذف ناعم لعنصر المحتوى.
-        """
         content = await ContentService.get_content_by_id(content_id)
+        # ✅ استخدام الحذف الناعم
         await content.set({"deleted_at": datetime.utcnow()})
-        return None # لا يوجد محتوى لإرجاعه بعد الحذف
+        return None
 
     @staticmethod
     async def update_feedback_and_rating(feedback: Feedback):
-        """
-        يحدّث متوسط التقييم وعدد المقيمين بعد إضافة تقييم جديد.
-        """
         content_id = feedback.content_id
-        # استخدام aggregation pipeline للحصول على المتوسط والعدد بكفاءة
+        # ✅ استخدام aggregation pipeline للحصول على المتوسط والعدد بكفاءة
         pipeline = [
             {"$match": {"content_id": content_id}},
             {"$group": {
@@ -99,3 +81,7 @@ class ContentService:
                 }}
             )
 
+    @staticmethod
+    async def get_feedback_for_content(content_id: PydanticObjectId):
+        feedbacks = await Feedback.find(Feedback.content_id == content_id).sort(-Feedback.created_at).to_list()
+        return feedbacks
