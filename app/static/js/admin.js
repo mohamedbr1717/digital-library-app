@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('token');
 
             if (!token) {
-                this.ui.showToast('يجب تسجيل الدخول أولاً للوصول.', 'error');
+                this.ui.showToast(window.i18n.translations.login_to_comment, 'error'); // ✅ استخدام رسالة مترجمة
                 setTimeout(() => window.location.href = '/', 2000);
                 return;
             }
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const stats = await this.api.getStats(token);
                 this.ui.updateStats(stats);
-                this.ui.showToast('تم تحميل الإحصائيات بنجاح.', 'success');
+                this.ui.showToast(window.i18n.translations.load_more, 'success'); // ✅ استخدام رسالة مترجمة
             } catch (error) {
                 this.ui.handleApiError(error);
                 // إعادة التوجيه في حالة الخطأ في الصلاحيات
@@ -57,48 +57,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 adminApp.elements.contentCount.textContent = stats.total_content;
             },
 
-            showToast(message, type = 'success') {
-                const toastContainer = document.querySelector('.container') || document.body;
-                const toast = document.createElement('div');
-                const bgColor = type === 'error' ? '#d32f2f' : '#388e3c';
-                
-                // استخدام تنسيقات PicoCSS المدمجة إذا أمكن
-                toast.setAttribute('style', `
-                    position: fixed;
-                    top: 20px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    background-color: ${bgColor};
-                    color: white;
-                    padding: 1rem 1.5rem;
-                    border-radius: 0.5rem;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                    z-index: 1000;
-                    opacity: 0;
-                    transition: opacity 0.3s ease, transform 0.3s ease;
-                    transform: translateX(-50%) translateY(-20px);
-                `);
-                toast.textContent = message;
-                document.body.appendChild(toast);
-                
-                setTimeout(() => {
-                    toast.style.opacity = '1';
-                    toast.style.transform = 'translateX(-50%) translateY(0)';
-                }, 100);
-                
-                setTimeout(() => {
-                    toast.style.opacity = '0';
-                    toast.addEventListener('transitionend', () => toast.remove());
-                }, 3500);
-            },
+            // ✅ استخدام دالة التنبيهات من `script.js`
+            showToast: window.app.ui.showToast,
 
             handleApiError(error) {
                 console.error("Admin API Error:", error);
-                let message = 'حدث خطأ غير متوقع.';
+                let message = window.i18n.translations.login_error; // ✅ استخدام رسالة مترجمة
                 if (error.status === 401) {
-                    message = 'جلسة الدخول غير صالحة أو منتهية.';
+                    message = window.i18n.translations.login_fail; // ✅ رسالة فشل تسجيل الدخول
                 } else if (error.status === 403) {
-                    message = 'ليس لديك صلاحيات كافية للوصول لهذه الصفحة.';
+                    message = window.i18n.translations.view_not_available; // ✅ رسالة عدم توفر العرض
                 } else if (error.data && (error.data.message || error.data.detail)) {
                     message = error.data.message || error.data.detail;
                 }
