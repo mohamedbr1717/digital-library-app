@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         state: {
             currentUser: null,
             currentToken: null,
-            currentView: 'book',
+            currentView: 'books', // ✅ تم تصحيح القيمة الافتراضية
             currentPage: 1,
             itemsPerPage: 12,
             isLastPage: false,
@@ -85,7 +85,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // ربط جميع مستمعي الأحداث
             this.elements.sidebarLinks.forEach(link => link.addEventListener('click', this.handlers.onViewChange.bind(this)));
             this.elements.exploreBtn.addEventListener('click', this.handlers.onExplore.bind(this));
-            this.elements.languageSelect.addEventListener('change', e => this.handlers.onLanguageChange(e.target.value));
+            
+            // ✅ تم نقل مستمع حدث تغيير اللغة إلى i18n.js
             
             // أزرار فتح النوافذ
             document.getElementById('open-login-btn').addEventListener('click', () => this.elements.loginDialog.showModal());
@@ -106,11 +107,13 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // إرسال التقييم
             this.elements.submitFeedbackBtn.addEventListener('click', this.handlers.onSubmitFeedback.bind(this));
+
+            // ✅ إضافة مستمع حدث مخصص لتحميل المحتوى بعد تغيير اللغة
+            document.addEventListener('language-changed', this.loadContent.bind(this));
         },
 
         async loadInitialState() {
-            // تحميل الترجمات أولاً لأن كل شيء يعتمد عليها
-            await this.handlers.onLanguageChange(localStorage.getItem('app_lang') || 'ar');
+            // ✅ تمت إزالة منطق تحميل اللغة هنا، الآن يتم التعامل معه في i18n.js
             
             // تحميل جلسة المستخدم
             const token = localStorage.getItem('token');
@@ -146,11 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     this.elements.libraryView.classList.remove('hidden');
                 }, 500);
             },
-            async onLanguageChange(lang) {
-                await window.i18n.setLanguage(lang);
-                this.state.translations = window.i18n.translations;
-                this.loadContent(); // إعادة تحميل المحتوى لتحديث النصوص
-            },
             onSwitchToRegister(e) {
                 e.preventDefault();
                 this.elements.loginDialog.close();
@@ -173,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     this.ui.updateAuthUI();
                     this.elements.loginDialog.close();
-                    this.ui.showToast(this.state.translations.login_success, 'success');
+                    this.ui.showToast(window.i18n.translations.login_success, 'success');
                 } catch (error) {
                     this.ui.handleApiError(error);
                 }
@@ -183,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const userData = Object.fromEntries(new FormData(e.target));
                 try {
                     await this.api.register(userData);
-                    this.ui.showToast(this.state.translations.registration_success, 'success');
+                    this.ui.showToast(window.i18n.translations.registration_success, 'success');
                     this.elements.registerDialog.close();
                     this.elements.loginDialog.showModal();
                 } catch (error) {
@@ -195,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.state.currentToken = null;
                 localStorage.clear();
                 this.ui.updateAuthUI();
-                this.ui.showToast(this.state.translations.logout_success, 'success');
+                this.ui.showToast(window.i18n.translations.logout_success, 'success');
             },
             onContentClick(e) {
                 const detailsBtn = e.target.closest('.view-details-btn');
@@ -205,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             async onSubmitFeedback() {
                  if (!this.state.currentUser) {
-                    this.ui.showToast(this.state.translations.login_to_comment, 'error');
+                    this.ui.showToast(window.i18n.translations.login_to_comment, 'error');
                     return;
                 }
                 const contentId = this.elements.detailsDialog.dataset.currentItemId;
@@ -213,17 +211,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 const comment = this.elements.commentInput.value;
 
                 if (!rating) {
-                    this.ui.showToast(this.state.translations.select_rating, 'error');
+                    this.ui.showToast(window.i18n.translations.select_rating, 'error');
                     return;
                 }
                 if (comment.length < 10) {
-                    this.ui.showToast(this.state.translations.comment_min_length, 'error');
+                    this.ui.showToast(window.i18n.translations.comment_min_length, 'error');
                     return;
                 }
                 
                 try {
                     await this.api.postFeedback({ content_id: contentId, rating: parseInt(rating), comment });
-                    this.ui.showToast(this.state.translations.comment_success, 'success');
+                    this.ui.showToast(window.i18n.translations.comment_success, 'success');
                     // تحديث التعليقات مباشرة
                     const comments = await this.api.getFeedback(contentId);
                     this.ui.renderComments(comments);
@@ -270,10 +268,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         async loadSummary(itemId) {
             if (!this.state.currentUser) {
-                this.ui.showToast(this.state.translations.login_to_summarize, 'error');
+                this.ui.showToast(window.i18n.translations.login_to_summarize, 'error');
                 return;
             }
-            this.elements.summaryContent.innerHTML = `<div class="loader"></div><p>${this.state.translations.summarizing}</p>`;
+            this.elements.summaryContent.innerHTML = `<div class="loader"></div><p>${window.i18n.translations.summarizing}</p>`;
             this.elements.summaryDialog.showModal();
             try {
                 const result = await this.api.getSummary(itemId);
@@ -375,6 +373,15 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                          });
                      }
+                     // ✅ إضافة مستمعي أحداث الفلاتر
+                     const filterSelects = app.elements.viewContainer.querySelectorAll('.filter-select');
+                     filterSelects.forEach(select => {
+                         select.addEventListener('change', e => {
+                             app.state.currentFilters[e.target.dataset.filter] = e.target.value;
+                             app.state.currentPage = 1;
+                             app.loadContent();
+                         });
+                     });
                  }
             },
             
@@ -385,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (app.state.currentPage === 1) grid.innerHTML = '';
 
                 if (items.length === 0 && app.state.currentPage === 1) {
-                    grid.innerHTML = `<p class="w-full text-center text-gray-500">${app.state.translations.no_matching_results}</p>`;
+                    grid.innerHTML = `<p class="w-full text-center text-gray-500">${window.i18n.translations.no_matching_results}</p>`;
                     return;
                 }
                 
@@ -395,17 +402,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     card.className = 'content-card';
                     card.innerHTML = `
                         <div class="card-image">
-                            <img src="${item.thumbnail || ''}" alt="${item.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x240/e2e8f0/64748b?text=${encodeURIComponent(app.state.translations.no_image)}';">
+                            <img src="${item.thumbnail || ''}" alt="${item.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x240/e2e8f0/64748b?text=${encodeURIComponent(window.i18n.translations.no_image)}';">
                         </div>
                         <div class="card-body">
                             <h3 class="card-title">${item.title}</h3>
-                            <p class="card-description">${item.description || app.state.translations.no_description}</p>
+                            <p class="card-description">${item.description || window.i18n.translations.no_description}</p>
                         </div>
                         <div class="card-footer">
-                            <span class="card-category">${app.state.translations[item.content_type] || item.content_type}</span>
+                            <span class="card-category">${window.i18n.translations[item.content_type] || item.content_type}</span>
                             <div class="card-actions">
-                                <button class="action-btn primary view-details-btn" data-id="${item._id}">${app.state.translations.details || 'Details'}</button>
-                                ${item.content_type !== 'hadith' ? `<button class="action-btn success summarize-btn" data-id="${item._id}">${app.state.translations.summarize_with_ai || 'Summarize'}</button>` : ''}
+                                <button class="action-btn primary view-details-btn" data-id="${item._id}">${window.i18n.translations.details || 'Details'}</button>
+                                ${item.content_type !== 'hadith' ? `<button class="action-btn success summarize-btn" data-id="${item._id}">${window.i18n.translations.summarize_with_ai || 'Summarize'}</button>` : ''}
                             </div>
                         </div>
                     `;
@@ -420,10 +427,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (app.state.currentPage === 1 && app.state.isLastPage) return;
 
-                const prevBtn = this.createPaginationButton(app.state.translations.previous || 'Previous', () => { app.state.currentPage--; app.loadContent(); });
+                const prevBtn = this.createPaginationButton(window.i18n.translations.previous || 'Previous', () => { app.state.currentPage--; app.loadContent(); });
                 prevBtn.disabled = app.state.currentPage === 1;
                 
-                const nextBtn = this.createPaginationButton(app.state.translations.next || 'Next', () => { app.state.currentPage++; app.loadContent(); });
+                const nextBtn = this.createPaginationButton(window.i18n.translations.next || 'Next', () => { app.state.currentPage++; app.loadContent(); });
                 nextBtn.disabled = app.state.isLastPage;
                 
                 const pageIndicator = document.createElement('span');
@@ -449,17 +456,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 app.elements.detailsPlaceholder.innerHTML = `
                     <h3 class="text-2xl font-bold mb-2">${item.title}</h3>
                     <img src="${item.thumbnail || ''}" alt="${item.title}" class="w-full h-64 object-cover rounded-lg mb-4" onerror="this.style.display='none'">
-                    <p>${item.description || app.state.translations.no_description}</p>
+                    <p>${item.description || window.i18n.translations.no_description}</p>
                     <div class="mt-4 text-sm text-gray-600">
-                        <span><strong>${app.state.translations.type}:</strong> ${item.content_type}</span> | 
-                        <span><strong>${app.state.translations.source}:</strong> ${item.source}</span>
+                        <span><strong>${window.i18n.translations.type}:</strong> ${item.content_type}</span> | 
+                        <span><strong>${window.i18n.translations.source}:</strong> ${item.source}</span>
                     </div>
                 `;
             },
             renderComments(comments) {
                 const container = app.elements.commentsContainer;
                 if(comments.length === 0) {
-                    container.innerHTML = `<p>${app.state.translations.no_comments_yet}</p>`;
+                    container.innerHTML = `<p>${window.i18n.translations.no_comments_yet}</p>`;
                     return;
                 }
                 container.innerHTML = comments.map(c => `
@@ -485,7 +492,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             handleApiError(error) {
                 console.error("API Error:", error);
-                let message = app.state.translations.login_error; // رسالة افتراضية
+                let message = window.i18n.translations.login_error; // رسالة افتراضية
                 if (error && error.data) {
                     message = error.data.details?.[0]?.message || error.data.message || JSON.stringify(error.data);
                 } else if (error && error.message) {
