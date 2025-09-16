@@ -40,6 +40,9 @@ window.i18n = {
             localStorage.setItem('app_lang', lang); // ✅ استخدام نفس مفتاح localStorage في script.js
             const switcher = document.getElementById('language-select'); // ✅ تم تصحيح الـ ID
             if(switcher) switcher.value = lang;
+            
+            // ✅ إطلاق حدث مخصص بعد تغيير اللغة
+            document.dispatchEvent(new Event('language-changed'));
 
         } catch (error) {
             console.error('Error loading language file:', error);
@@ -56,7 +59,7 @@ window.i18n = {
 
 // دالة تهيئة اللغة عند بدء التشغيل
 async function initializeLanguage() {
-    const languageSelect = document.getElementById('language-select'); // ✅ تم تصحيح الـ ID
+    const languageSelect = document.getElementById('language-select');
     
     if (languageSelect) {
         languageSelect.addEventListener('change', (e) => {
@@ -64,26 +67,21 @@ async function initializeLanguage() {
         });
     }
 
-    const savedLang = localStorage.getItem('app_lang'); // ✅ استخدام نفس مفتاح localStorage في script.js
+    const savedLang = localStorage.getItem('app_lang');
     const userLang = navigator.language.split('-')[0];
-    const supportedLangs = ['ar', 'en', 'fr', 'de', 'es']; // تأكد من وجود هذه الملفات
+    const supportedLangs = ['ar', 'en', 'fr', 'de', 'es'];
     
-    let langToLoad = 'ar'; // الافتراضي
+    let langToLoad = 'ar';
     if (savedLang && supportedLangs.includes(savedLang)) {
         langToLoad = savedLang;
     } else if (supportedLangs.includes(userLang)) {
         langToLoad = userLang;
     }
     
-    // الانتظار هنا حتى يتم تحميل اللغة بالكامل
     await window.i18n.setLanguage(langToLoad);
 }
 
 // تشغيل تهيئة اللغة عند بدء التشغيل
 document.addEventListener('DOMContentLoaded', () => {
-    initializeLanguage().then(() => {
-        // لا حاجة لإطلاق حدث 'language-ready' إذا كان script.js لا ينتظره
-        // ولكن يمكن تركه للمرونة المستقبلية
-        // document.dispatchEvent(new Event('language-ready'));
-    });
+    initializeLanguage();
 });
