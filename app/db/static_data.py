@@ -58,4 +58,3 @@ EDUCATIONAL_BOOKS_DATA: Dict[str, Dict[str, Any]] = {
     },
     # يمكنك إضافة باقي الكتب هنا بنفس الطريقة
 }
-
