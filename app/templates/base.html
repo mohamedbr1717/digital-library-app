@@ -4,22 +4,10 @@
     <meta charset="UTF-8">
     <title>{% block title %}المكتبة{% endblock %}</title>
     <link rel="stylesheet" href="/static/styles.css">
+    {% block head_links %}{% endblock %}
 </head>
 <body>
-    <!-- ...الهيدر والقوائم الجانبية وأي عناصر ثابتة... -->
-
     {% block content %}
-    <!-- هنا يظهر محتوى كل صفحة فرعية -->
     {% endblock %}
-
-    <!-- حوار التلخيص العام -->
-    <dialog id="summary-dialog" class="rounded-xl p-6 w-full max-w-xl">
-        <form method="dialog">
-            <button id="close-summary-btn" class="absolute left-3 top-3 text-gray-400 hover:text-red-600 text-xl" style="font-size: 1.4em;" aria-label="إغلاق">&times;</button>
-        </form>
-        <div id="summary-content" class="mt-2"></div>
-    </dialog>
-
-    <script src="/static/script.js?v=7.0"></script>
 </body>
 </html>
