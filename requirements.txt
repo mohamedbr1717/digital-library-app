@@ -1,5 +1,4 @@
-python==3.12.7
-fastapi==0.110.1
+Fastapi==0.110.1
 uvicorn[standard]==0.29.0
 jinja2==3.1.3
 motor==3.3.2
@@ -11,9 +10,8 @@ httpx==0.27.0
 python-dotenv==1.0.1
 pydantic[email]==2.7.0
 google-generativeai==0.5.4
-google-generativeai==0.5.4
 feedparser==6.0.11
 lxml==5.1.1
 apscheduler==3.10.4
 beautifulsoup4==4.12.3
-pydantic-settings
+pydantic-settings==2.1.0 # هذا الإصدار متوافق مع Pydantic 2.x
