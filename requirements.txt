@@ -1,17 +1,1 @@
-Fastapi==0.110.1
-uvicorn[standard]==0.29.0
-jinja2==3.1.3
-motor==3.3.2
-beanie==1.23.2
-pymongo==4.6.2
-passlib[bcrypt]==1.7.4
-python-jose[cryptography]==3.3.0
-httpx==0.27.0
-python-dotenv==1.0.1
-pydantic[email]==2.7.0
-google-generativeai==0.5.4
-feedparser==6.0.11
-lxml==5.1.1
-apscheduler==3.10.4
-beautifulsoup4==4.12.3
-pydantic-settings==2.10.1
+استخدم هذه الإصدارات لضمان التوافق مع بايثون 3.13fastapi==0.95.0uvicorn[standard]==0.22.0jinja2==3.1.2motor==3.1.2beanie==1.19.0pymongo==4.3.3passlib[bcrypt]==1.7.4python-jose[cryptography]==3.3.0httpx==0.24.0python-dotenv==1.0.0pydantic[email]==1.10.7google-generativeai==0.5.4feedparser==6.0.10lxml==4.9.2apscheduler==3.10.4beautifulsoup4==4.12.2
