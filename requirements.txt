@@ -7,7 +7,7 @@ python-dotenv==1.0.1
 
 # --- MongoDB & ODM ---
 motor==3.3.2
-beanie==1.23.2   # ⚠️ استخدم الإصدار 1.x المتوافق مع كودك الحالي
+beanie==1.23.2   # الإصدار 2.0 مختلف كلياً، الأفضل تثبيت 1.x مع الكود الحالي
 
 # --- التشفير والتوثيق ---
 passlib[bcrypt]==1.7.4
@@ -16,14 +16,14 @@ python-jose[cryptography]==3.3.0
 # --- Google Generative AI ---
 google-generativeai==0.7.2
 google-ai-generativelanguage==0.6.6
+google-api-core==2.20.0
 proto-plus==1.24.0
 protobuf==4.25.3
 
-# --- gRPC (مُثبتة ومستقرة) ---
+# --- gRPC (إصدارات مستقرة متوافقة) ---
 grpcio==1.62.2
 grpcio-status==1.62.2
 
-# --- إضافات لحل مشاكل بايثون 3.13 ---
+# --- إضافات لحل مشاكل Python 3.13 ---
 cryptography==42.0.8
 lxml==4.9.3
-
