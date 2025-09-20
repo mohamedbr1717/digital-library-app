@@ -16,3 +16,4 @@ lxml
 apscheduler
 beautifulsoup4
 pydantic-settings
+grpcio-status==1.71.2
