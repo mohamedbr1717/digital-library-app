@@ -3,169 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المكتبة الرقمية</title>
-    <link rel="icon" href="/static/favicon.ico" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <title data-i18n="library_title">المكتبة الرقمية</title>
     <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="toast-container"></div>
 
-    <div id="landing-view" class="landing-view">
-        <div class="container">
-            <h1 class="logo">المكتبة الرقمية</h1>
-            <p class="tagline">بوابة المعرفة الشاملة - كتب، دروس وأحاديث</p>
-            <button id="explore-btn" class="explore-btn"><i class="fas fa-door-open"></i> استكشف المكتبة</button>
-        </div>
-    </div>
-    
-    <div id="library-view" class="library-view hidden">
-        <div class="sidebar">
-            <div class="brand" data-i18n="library_title">المكتبة الرقمية</div>
+    <section class="landing-view" id="landing-view">
+        <h1 data-i18n="welcome_title">المكتبة الرقمية الشاملة</h1>
+        <p data-i18n="welcome_text">منصة رقمية تجمع بين المواد التعليمية والموارد الإسلامية في مكان واحد.</p>
+        <button class="explore-btn" id="explore-btn" data-i18n="explore_btn">استكشف الآن</button>
+    </section>
+
+    <section class="library-view hidden" id="library-view">
+        <aside class="sidebar">
+            <h2 class="brand">المكتبة الرقمية</h2>
             <nav class="sidebar-nav">
-                <a href="#" class="sidebar-link active" data-view="book" data-i18n="books"><i class="fas fa-book"></i> الكتب</a>
-                <a href="#" class="sidebar-link" data-view="educational" data-i18n="educational_lessons"><i class="fas fa-graduation-cap"></i> الدروس</a>
-                <a href="#" class="sidebar-link" data-view="hadith" data-i18n="hadiths"><i class="fas fa-mosque"></i> الأحاديث</a>
+                <a href="#" class="sidebar-link active" data-view="educational">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span data-i18n="educational_materials">المواد التعليمية</span>
+                </a>
+                <a href="#" class="sidebar-link" data-view="hadith">
+                    <i class="fas fa-mosque"></i>
+                    <span data-i18n="hadith_collection">مجموعة الأحاديث</span>
+                </a>
+                <a href="/admin" class="sidebar-link hidden" id="admin-link">
+                    <i class="fas fa-chart-line"></i>
+                    <span data-i18n="admin_dashboard">لوحة التحكم</span>
+                </a>
             </nav>
-            <a href="/admin" id="admin-link" class="sidebar-link hidden" style="margin-top: 1rem;"><i class="fas fa-cog"></i> <span data-i18n="admin_panel">الإدارة</span></a>
-            
             <div class="language-selector">
-                <label for="language-select" class="block text-gray-300 text-sm mb-1" data-i18n="select_language">اختر اللغة:</label>
-                <select id="language-select" class="filter-select w-full">
-                    <option value="ar">العربية</option>
-                    <option value="en">English</option>
-                    <option value="fr">Français</option>
-                    <option value="de">Deutsch</option>
-                    <option value="es">Español</option>
+                <label for="language-select" data-i18n="language">اللغة:</label>
+                <select id="language-select" class="filter-select">
+                    <option value="ar" data-i18n="lang_ar">العربية</option>
+                    <option value="en" data-i18n="lang_en">English</option>
                 </select>
             </div>
-        </div>
-        
-        <div class="main-content">
+        </aside>
+
+        <main class="main-content">
             <header class="header">
-                <h1 id="main-title" class="main-title" data-i18n="books">الكتب</h1>
-                <div id="auth-buttons" class="auth-buttons">
-                    <button id="open-register-btn" class="btn btn-outline" data-i18n="register">إنشاء حساب</button>
-                    <button id="open-login-btn" class="btn btn-primary" data-i18n="login">تسجيل الدخول</button>
+                <h1 class="main-title"></h1>
+                <div class="auth-buttons" id="auth-buttons">
+                    <button class="btn btn-primary" id="open-login-btn" data-i18n="login_btn">تسجيل الدخول</button>
+                    <button class="btn btn-outline" id="open-register-btn" data-i18n="register_btn">إنشاء حساب</button>
                 </div>
-                <div id="user-info" class="user-info hidden">
-                    <div id="user-avatar" class="avatar"></div>
+                <div class="user-info hidden" id="user-info">
+                    <div class="user-avatar" id="user-avatar"></div>
                     <div>
-                        <div id="username-display" style="font-weight: 600;"></div>
-                        <button id="logout-btn" style="font-size: 0.85rem; color: var(--danger); background: none; border: none; cursor: pointer;" data-i18n="logout">تسجيل الخروج</button>
+                        <span class="font-semibold" id="username-display"></span>
+                        <div class="text-sm text-gray-500 cursor-pointer" id="logout-btn" data-i18n="logout_btn">تسجيل الخروج</div>
                     </div>
                 </div>
             </header>
-            
-            <div id="view-container"></div>
 
-            <div id="loader-container" class="loader-container hidden"><div class="loader"></div></div>
-        </div>
-    </div>
-    
+            <div id="view-container">
+                <template id="educational-view-template">
+                    <div class="section-header">
+                        <h2 class="section-title" data-i18n="educational_materials">المواد التعليمية</h2>
+                        <div class="section-filters">
+                            <input type="search" placeholder="ابحث عن مادة..." class="section-search-bar" data-i18n-placeholder="search_placeholder">
+                            <select class="filter-select" data-filter="level">
+                                <option value="ALL" data-i18n="all_levels">جميع المستويات</option>
+                                <option value="ابتدائي">ابتدائي</option>
+                                <option value="إعدادي">إعدادي</option>
+                                <option value="ثانوي">ثانوي</option>
+                                <option value="جامعي">جامعي</option>
+                            </select>
+                            <select class="filter-select" data-filter="subject">
+                                <option value="ALL" data-i18n="all_subjects">جميع المواضيع</option>
+                                <option value="الفيزياء">الفيزياء</option>
+                                <option value="الرياضيات">الرياضيات</option>
+                                <option value="الكيمياء">الكيمياء</option>
+                                <option value="الأحياء">الأحياء</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="content-grid"></div>
+                </template>
+
+                <template id="hadith-view-template">
+                    <div class="section-header">
+                        <h2 class="section-title" data-i18n="hadith_collection">مجموعة الأحاديث</h2>
+                        <div class="section-filters">
+                            <input type="search" placeholder="ابحث عن حديث..." class="section-search-bar" data-i18n-placeholder="search_placeholder">
+                            <select class="filter-select" data-filter="category">
+                                <option value="ALL" data-i18n="all_categories">جميع التصنيفات</option>
+                                <option value="صحيح البخاري">صحيح البخاري</option>
+                                <option value="صحيح مسلم">صحيح مسلم</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="content-grid"></div>
+                </template>
+
+            </div>
+
+            <div class="loader-container hidden" id="loader-container">
+                <div class="loader"></div>
+            </div>
+        </main>
+    </section>
+
     <dialog id="login-dialog">
         <div class="dialog-header">
-            <h3 class="dialog-title" data-i18n="login">تسجيل الدخول</h3>
-            <button type="button" class="close-btn close-dialog">&times;</button>
+            <h3 class="dialog-title" data-i18n="login_title">تسجيل الدخول</h3>
+            <button class="close-btn" data-i18n="close_btn">×</button>
         </div>
-        <form id="login-form" class="dialog-body">
-            <div class="form-group">
-                <label for="login-username" data-i18n="username">اسم المستخدم:</label>
-                <input type="text" id="login-username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="login-password" data-i18n="password">كلمة المرور:</label>
-                <input type="password" id="login-password" name="password" required>
-            </div>
-            <div class="dialog-footer">
-                <button type="submit" class="btn btn-primary" data-i18n="login_button">دخول</button>
-            </div>
-            <p class="text-center text-sm text-gray-600 mt-4" data-i18n="no_account">ليس لديك حساب؟ <a href="#" id="switch-to-register" class="text-blue-600 hover:underline" data-i18n="register_now">سجل الآن</a></p>
-        </form>
+        <div class="dialog-body">
+            <form id="login-form" class="flex flex-col gap-4">
+                <div class="flex flex-col">
+                    <label for="login-username" data-i18n="username">اسم المستخدم</label>
+                    <input type="text" id="login-username" name="username" class="border p-2 rounded-md" required>
+                </div>
+                <div class="flex flex-col">
+                    <label for="login-password" data-i18n="password">كلمة المرور</label>
+                    <input type="password" id="login-password" name="password" class="border p-2 rounded-md" required>
+                </div>
+                <button type="submit" class="btn btn-primary" data-i18n="login_btn">تسجيل الدخول</button>
+            </form>
+            <p class="mt-4 text-center text-sm text-gray-500" data-i18n="no_account">لا تمتلك حسابًا؟ <a href="#" id="switch-to-register" class="text-primary font-semibold" data-i18n="create_account">أنشئ حسابًا</a></p>
+        </div>
     </dialog>
 
     <dialog id="register-dialog">
         <div class="dialog-header">
-            <h3 class="dialog-title" data-i18n="register">إنشاء حساب</h3>
-            <button type="button" class="close-btn close-dialog">&times;</button>
+            <h3 class="dialog-title" data-i18n="register_title">إنشاء حساب</h3>
+            <button class="close-btn" data-i18n="close_btn">×</button>
         </div>
-        <form id="register-form" class="dialog-body">
-            <div class="form-group">
-                <label for="register-username" data-i18n="username">اسم المستخدم:</label>
-                <input type="text" id="register-username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="register-email" data-i18n="email">البريد الإلكتروني:</label>
-                <input type="email" id="register-email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="register-password" data-i18n="password">كلمة المرور:</label>
-                <input type="password" id="register-password" name="password" required>
-            </div>
-            <div class="dialog-footer">
-                <button type="submit" class="btn btn-primary" data-i18n="register_button">تسجيل</button>
-            </div>
-            <p class="text-center text-sm text-gray-600 mt-4" data-i18n="already_have_account">لديك حساب بالفعل؟ <a href="#" id="switch-to-login" class="text-blue-600 hover:underline" data-i18n="login_now">سجل الدخول الآن</a></p>
-        </form>
+        <div class="dialog-body">
+            <form id="register-form" class="flex flex-col gap-4">
+                <div class="flex flex-col">
+                    <label for="register-username" data-i18n="username">اسم المستخدم</label>
+                    <input type="text" id="register-username" name="username" class="border p-2 rounded-md" required>
+                </div>
+                <div class="flex flex-col">
+                    <label for="register-email" data-i18n="email">البريد الإلكتروني</label>
+                    <input type="email" id="register-email" name="email" class="border p-2 rounded-md" required>
+                </div>
+                <div class="flex flex-col">
+                    <label for="register-password" data-i18n="password">كلمة المرور</label>
+                    <input type="password" id="register-password" name="password" class="border p-2 rounded-md" required>
+                </div>
+                <button type="submit" class="btn btn-primary" data-i18n="register_btn">إنشاء حساب</button>
+            </form>
+            <p class="mt-4 text-center text-sm text-gray-500" data-i18n="has_account">لديك حساب بالفعل؟ <a href="#" id="switch-to-login" class="text-primary font-semibold" data-i18n="login_btn">تسجيل الدخول</a></p>
+        </div>
     </dialog>
 
     <dialog id="details-dialog">
         <div class="dialog-header">
-            <h3 id="details-title" class="dialog-title" data-i18n="content_details">تفاصيل المحتوى</h3>
-            <button type="button" class="close-btn close-dialog">&times;</button>
+            <h3 class="dialog-title" data-i18n="details_title">التفاصيل</h3>
+            <button class="close-btn">×</button>
         </div>
         <div class="dialog-body">
             <div id="item-details-placeholder"></div>
-            <h4 class="text-xl font-semibold mt-6 mb-3" data-i18n="comments">التعليقات</h4>
-            <div id="comments-container"></div>
+
             <div class="mt-6">
-                <h5 class="text-lg font-semibold mb-2" data-i18n="add_your_comment">أضف تعليقك:</h5>
-                <div class="rating-stars flex items-center gap-1 mb-3" id="rating-stars-input">
+                <h4 class="text-lg font-semibold mb-2" data-i18n="comments_title">التعليقات والتقييمات</h4>
+                <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                    <h5 class="font-medium mb-2" data-i18n="add_comment">أضف تقييمك</h5>
+                    <div class="flex items-center gap-2 mb-2" id="rating-stars-input">
+                        <i class="far fa-star text-gray-400 cursor-pointer" data-rating="1"></i>
+                        <i class="far fa-star text-gray-400 cursor-pointer" data-rating="2"></i>
+                        <i class="far fa-star text-gray-400 cursor-pointer" data-rating="3"></i>
+                        <i class="far fa-star text-gray-400 cursor-pointer" data-rating="4"></i>
+                        <i class="far fa-star text-gray-400 cursor-pointer" data-rating="5"></i>
                     </div>
-                <textarea id="comment-input" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" rows="4" placeholder="اكتب تعليقك هنا..." data-i18n-placeholder="write_your_comment"></textarea>
-                <button id="submit-feedback-btn" class="btn btn-primary mt-3 w-full" data-i18n="submit_comment">إرسال التعليق</button>
+                    <textarea id="comment-input" rows="3" placeholder="اكتب تعليقك هنا..." class="w-full p-2 rounded-md border" data-i18n-placeholder="comment_placeholder"></textarea>
+                    <button id="submit-feedback-btn" class="btn btn-primary mt-2" data-i18n="submit_comment">إرسال</button>
+                </div>
+                <div id="comments-container" class="space-y-4"></div>
             </div>
         </div>
     </dialog>
 
     <dialog id="summary-dialog">
         <div class="dialog-header">
-            <h3 class="dialog-title" data-i18n="ai_summary_title">ملخص الذكاء الاصطناعي</h3>
-            <button type="button" class="close-btn close-dialog">&times;</button>
+            <h3 class="dialog-title" data-i18n="summary_title">ملخص المحتوى</h3>
+            <button class="close-btn">×</button>
         </div>
-        <div id="summary-content" class="dialog-body mt-2"></div>
+        <div class="dialog-body">
+            <div id="summary-content"></div>
+        </div>
     </dialog>
 
-    <template id="book-view-template">
-        <div class="section-header">
-            <h2 class="section-title" data-i18n="all_books">جميع الكتب</h2>
-            <input type="text" class="section-search-bar" placeholder="ابحث عن كتاب..." data-i18n-placeholder="search_book_placeholder">
-        </div>
-        <div class="categories">
-            </div>
-        <div class="content-grid"></div>
-    </template>
-    
-    <template id="educational-view-template">
-        <div class="section-header">
-            <h2 class="section-title" data-i18n="educational_lessons">الدروس التعليمية</h2>
-            <input type="text" class="section-search-bar" placeholder="ابحث عن درس..." data-i18n-placeholder="search_lesson_placeholder">
-        </div>
-        <div class="section-filters">
-            </div>
-        <div class="content-grid"></div>
-    </template>
-
-    <template id="hadith-view-template">
-        <div class="section-header">
-            <h2 class="section-title" data-i18n="hadiths">الأحاديث النبوية</h2>
-            <input type="text" class="section-search-bar" placeholder="ابحث في الأحاديث..." data-i18n-placeholder="search_hadith_placeholder">
-        </div>
-        <div class="content-grid"></div>
-    </template>
+    <div id="toast-container"></div>
 
     <script src="/static/js/i18n.js"></script>
     <script src="/static/js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const starsContainer = document.getElementById('rating-stars-input');
+            if (starsContainer) {
+                const stars = starsContainer.querySelectorAll('i');
+                stars.forEach(star => {
+                    star.addEventListener('click', () => {
+                        const rating = star.dataset.rating;
+                        stars.forEach(s => {
+                            if (s.dataset.rating <= rating) {
+                                s.classList.remove('far');
+                                s.classList.add('fas', 'active');
+                            } else {
+                                s.classList.remove('fas', 'active');
+                                s.classList.add('far');
+                            }
+                        });
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 </html>
