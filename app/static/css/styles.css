@@ -145,7 +145,7 @@ dialog::backdrop { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px); }
 /* تنسيق قائمة اختيار اللغة */
 .language-selector {
     padding: 0 1rem;
-    margin-top: auto; /* يدفع العنصر لأسفل الشريط الجانبي */
+    margin-top: auto;
 }
 .language-selector label { margin-bottom: 0.5rem; }
 .language-selector .filter-select {
@@ -226,6 +226,6 @@ dialog::backdrop { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px); }
     margin: 0.5rem 0;
 }
 .comment-rating {
-    color: #f59e0b; /* Amber color for stars */
+    color: #f59e0b;
     font-size: 0.9rem;
 }
