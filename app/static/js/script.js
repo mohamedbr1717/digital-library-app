@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         state: {
             currentUser: null,
             currentToken: null,
-            currentView: 'books', // ✅ تم تصحيح القيمة الافتراضية
+            currentView: 'educational', // ✅ تم تعديل القيمة الافتراضية
             currentPage: 1,
             itemsPerPage: 12,
             isLastPage: false,
@@ -41,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
         cacheElements() {
-            // تخزين عناصر DOM الرئيسية لتجنب إعادة البحث عنها
             this.elements.libraryView = document.getElementById('library-view');
             this.elements.landingView = document.getElementById('landing-view');
             this.elements.exploreBtn = document.getElementById('explore-btn');
@@ -51,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
             this.elements.mainTitle = document.getElementById('main-title');
             this.elements.languageSelect = document.getElementById('language-select');
             
-            // التوثيق
             this.elements.loginDialog = document.getElementById('login-dialog');
             this.elements.registerDialog = document.getElementById('register-dialog');
             this.elements.loginForm = document.getElementById('login-form');
@@ -63,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
             this.elements.logoutBtn = document.getElementById('logout-btn');
             this.elements.adminLink = document.getElementById('admin-link');
 
-            // نوافذ التفاصيل والتلخيص
             this.elements.detailsDialog = document.getElementById('details-dialog');
             this.elements.detailsPlaceholder = document.getElementById('item-details-placeholder');
             this.elements.commentsContainer = document.getElementById('comments-container');
@@ -73,7 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
             this.elements.summaryDialog = document.getElementById('summary-dialog');
             this.elements.summaryContent = document.getElementById('summary-content');
             
-            // حاويات مساعدة
             this.elements.toastContainer = document.getElementById('toast-container');
             this.elements.paginationContainer = document.createElement('div');
             this.elements.paginationContainer.id = 'pagination-container';
@@ -82,40 +78,28 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
         bindEvents() {
-            // ربط جميع مستمعي الأحداث
             this.elements.sidebarLinks.forEach(link => link.addEventListener('click', this.handlers.onViewChange.bind(this)));
             this.elements.exploreBtn.addEventListener('click', this.handlers.onExplore.bind(this));
             
-            // ✅ تم نقل مستمع حدث تغيير اللغة إلى i18n.js
-            
-            // أزرار فتح النوافذ
             document.getElementById('open-login-btn').addEventListener('click', () => this.elements.loginDialog.showModal());
             document.getElementById('open-register-btn').addEventListener('click', () => this.elements.registerDialog.showModal());
             
-            // أزرار إغلاق النوافذ والتبديل بينها
             document.querySelectorAll('.close-dialog').forEach(btn => btn.addEventListener('click', () => btn.closest('dialog').close()));
             document.getElementById('switch-to-register').addEventListener('click', this.handlers.onSwitchToRegister.bind(this));
             document.getElementById('switch-to-login').addEventListener('click', this.handlers.onSwitchToLogin.bind(this));
 
-            // نماذج التوثيق
             this.elements.loginForm.addEventListener('submit', this.handlers.onLogin.bind(this));
             this.elements.registerForm.addEventListener('submit', this.handlers.onRegister.bind(this));
             this.elements.logoutBtn.addEventListener('click', this.handlers.onLogout.bind(this));
             
-            // الأحداث الديناميكية داخل حاوية المحتوى
             this.elements.viewContainer.addEventListener('click', this.handlers.onContentClick.bind(this));
             
-            // إرسال التقييم
             this.elements.submitFeedbackBtn.addEventListener('click', this.handlers.onSubmitFeedback.bind(this));
 
-            // ✅ إضافة مستمع حدث مخصص لتحميل المحتوى بعد تغيير اللغة
             document.addEventListener('language-changed', this.loadContent.bind(this));
         },
 
         async loadInitialState() {
-            // ✅ تمت إزالة منطق تحميل اللغة هنا، الآن يتم التعامل معه في i18n.js
-            
-            // تحميل جلسة المستخدم
             const token = localStorage.getItem('token');
             const user = localStorage.getItem('user');
             if (token && user) {
@@ -222,7 +206,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 try {
                     await this.api.postFeedback({ content_id: contentId, rating: parseInt(rating), comment });
                     this.ui.showToast(window.i18n.translations.comment_success, 'success');
-                    // تحديث التعليقات مباشرة
                     const comments = await this.api.getFeedback(contentId);
                     this.ui.renderComments(comments);
                     this.elements.commentInput.value = '';
@@ -253,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         async loadDetails(itemId) {
             this.elements.detailsDialog.showModal();
-            this.ui.renderItemDetails(null); // عرض هيكل التحميل
+            this.ui.renderItemDetails(null);
             try {
                 const item = await this.api.getItemDetails(itemId);
                 const comments = await this.api.getFeedback(itemId);
@@ -299,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 const response = await fetch(url, options);
-                const responseData = await response.json().catch(() => ({})); // تجنب الخطأ لو كان الرد فارغاً
+                const responseData = await response.json().catch(() => ({}));
 
                 if (!response.ok) {
                     throw { status: response.status, data: responseData };
@@ -373,7 +356,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                          });
                      }
-                     // ✅ إضافة مستمعي أحداث الفلاتر
                      const filterSelects = app.elements.viewContainer.querySelectorAll('.filter-select');
                      filterSelects.forEach(select => {
                          select.addEventListener('change', e => {
@@ -492,7 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             handleApiError(error) {
                 console.error("API Error:", error);
-                let message = window.i18n.translations.login_error; // رسالة افتراضية
+                let message = window.i18n.translations.login_error;
                 if (error && error.data) {
                     message = error.data.details?.[0]?.message || error.data.message || JSON.stringify(error.data);
                 } else if (error && error.message) {
@@ -503,6 +485,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // بدء تشغيل التطبيق
     app.init();
 });
