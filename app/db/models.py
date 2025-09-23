@@ -27,7 +27,7 @@ class ContentCreateIn(BaseModel):
     source: str
     source_id: str
     source_url: Optional[str] = None
-    content_type: Literal["book", "educational", "hadith"]
+    content_type: Literal["educational", "hadith"]
     tags: List[str] = []
     language: Optional[str] = "ar"
 
@@ -45,7 +45,7 @@ class User(Document):
     hashed_password: str
     is_admin: bool = False
     created_at: datetime = Field(default_factory=datetime.utcnow)
-    deleted_at: Optional[datetime] = None # للحذف الناعم
+    deleted_at: Optional[datetime] = None
 
     class Settings:
         name = "users"
@@ -63,26 +63,23 @@ class BaseContent(Document):
     rating_count: int = 0
     added_at: datetime = Field(default_factory=datetime.utcnow)
     language: str = "ar"
-    deleted_at: Optional[datetime] = None # للحذف الناعم
+    deleted_at: Optional[datetime] = None
 
     class Settings:
         name = "content"
         indexes = [
-            # فهرس نصي للبحث بالاسم والوصف
             IndexModel(
                 [("title", TEXT), ("description", TEXT)],
                 name="title_desc_text_index",
-                default_language="none" # يدعم لغات متعددة بشكل أفضل
+                default_language="none"
             ),
-            # فهرس مركب لتسريع الفلترة والترتيب الشائع
             IndexModel(
                 [("content_type", ASCENDING), ("added_at", DESCENDING)],
                 name="type_and_date_sort_index"
             ),
-            # فهارس للحقول التي يتم البحث بها كثيراً
             IndexModel([("tags", ASCENDING)], name="tags_index"),
             IndexModel([("language", ASCENDING)], name="language_index"),
-            IndexModel([("deleted_at", ASCENDING)], name="deleted_at_index", sparse=True), # فهرس متفرق للحذف الناعم
+            IndexModel([("deleted_at", ASCENDING)], name="deleted_at_index", sparse=True),
         ]
 
 class Feedback(Document):
@@ -96,7 +93,6 @@ class Feedback(Document):
     class Settings:
         name = "feedbacks"
         indexes = [
-            # فهرس مركب لجلب التعليقات مرتبة
             IndexModel(
                 [("content_id", ASCENDING), ("created_at", DESCENDING)],
                 name="feedback_query_index"
