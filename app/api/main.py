@@ -1,4 +1,3 @@
-# app/main.py
 import uuid
 from fastapi import FastAPI, Request, Depends, status, HTTPException
 from fastapi.responses import JSONResponse
@@ -18,9 +17,9 @@ from app.core.config import settings
 from app.core.security import create_access_token, get_current_user, get_current_admin_user
 from app.db.models import User, BaseContent, Feedback, UserIn, Token, FeedbackIn, ContentCreateIn, ContentUpdateIn
 from app.db.error_models import LibraryException, APIErrorResponse, ErrorLog, ContentNotFoundError, ValidationError, AuthenticationError
-from app.services.content_service import ContentService # ✅ استيراد خدمة المحتوى
-from app.services.user_service import UserService # ✅ استيراد خدمة المستخدم
-from app.db.static_data import EDUCATIONAL_BOOKS_DATA # ✅ استيراد البيانات الثابتة للكتب
+from app.services.content_service import ContentService
+from app.services.user_service import UserService
+from app.services.gemini_utils import generate_gemini_summary
 
 # --- تهيئة تطبيق FastAPI ---
 app = FastAPI(
@@ -122,14 +121,6 @@ def serve_home(request: Request):
 def serve_admin_dashboard(request: Request):
     return templates.TemplateResponse("admin.html", {"request": request})
 
-@app.get("/books/{book_name}", tags=["Frontend"])
-def serve_educational_book(request: Request, book_name: str):
-    book_data = EDUCATIONAL_BOOKS_DATA.get(book_name)
-    if not book_data:
-        raise HTTPException(status_code=404, detail="Book not found")
-    
-    return templates.TemplateResponse("educational_book_template.html", {"request": request, "book": book_data})
-
 # 2. التوثيق والمستخدمون
 @app.post("/api/token", response_model=Token, tags=["Auth"])
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
@@ -148,7 +139,6 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 
 @app.post("/api/register", status_code=status.HTTP_201_CREATED, tags=["Auth"])
 async def register_user(user_in: UserIn):
-    # ✅ استخدام خدمة المستخدم
     user = await UserService.create_user(user_in)
     return {"message": "تم إنشاء الحساب بنجاح!"}
 
@@ -168,23 +158,19 @@ async def get_content(
     if level and level != "ALL": tags.append(level)
     if subject and subject != "ALL": tags.append(subject)
 
-    # ✅ استخدام خدمة المحتوى
     content_list = await ContentService.get_content_by_type(content_type, page, page_size, q, tags)
     return content_list
 
 @app.get("/api/content/{item_id}", response_model=BaseContent, tags=["Content"])
 async def get_content_item(item_id: PydanticObjectId):
-    # ✅ استخدام خدمة المحتوى
     content = await ContentService.get_content_by_id(item_id)
     return content
 
 @app.post("/api/summarize/{item_id}", tags=["Content"])
 async def summarize_content(item_id: PydanticObjectId, current_user: User = Depends(get_current_user)):
-    from app.services.gemini_utils import generate_gemini_summary
-
     content = await ContentService.get_content_by_id(item_id)
     
-    if content.content_type not in ["book", "educational"]:
+    if content.content_type not in ["educational"]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="لا يمكن تلخيص هذا النوع من المحتوى."
@@ -219,38 +205,31 @@ async def post_feedback(feedback_in: FeedbackIn, current_user: User = Depends(ge
     )
     await feedback.insert()
 
-    # ✅ استخدام دالة الخدمة لتحديث التقييم بكفاءة
     await ContentService.update_feedback_and_rating(feedback)
 
     return {"message": "تم إرسال التقييم بنجاح."}
 
 @app.get("/api/feedback/{content_id}", response_model=List[Feedback], tags=["Feedback"])
 async def get_feedback_for_content(content_id: PydanticObjectId):
-    # ✅ استخدام خدمة المحتوى
     feedbacks = await ContentService.get_feedback_for_content(content_id)
     return feedbacks
 
 @app.get("/api/admin/stats", tags=["Admin"])
 async def get_admin_stats(current_user: User = Depends(get_current_admin_user)):
-    # ✅ استخدام خدمة المستخدم
     stats = await UserService.get_admin_stats()
     return stats
 
-# ✅ نقطة نهاية إدارة المحتوى (للمستخدمين الإداريين فقط)
 @app.post("/api/content", status_code=status.HTTP_201_CREATED, tags=["Admin Content"])
 async def create_content(content_data: ContentCreateIn, current_user: User = Depends(get_current_admin_user)):
-    # ✅ استخدام خدمة المحتوى
     content = await ContentService.create_new_content(content_data)
     return content
 
 @app.put("/api/content/{content_id}", tags=["Admin Content"])
 async def update_content(content_id: PydanticObjectId, content_data: ContentUpdateIn, current_user: User = Depends(get_current_admin_user)):
-    # ✅ استخدام خدمة المحتوى
     content = await ContentService.update_existing_content(content_id, content_data)
     return content
 
 @app.delete("/api/content/{content_id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Admin Content"])
 async def delete_content(content_id: PydanticObjectId, current_user: User = Depends(get_current_admin_user)):
-    # ✅ استخدام خدمة المحتوى
     await ContentService.delete_content_by_id(content_id)
     return
